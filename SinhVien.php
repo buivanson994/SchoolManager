@@ -19,6 +19,7 @@
     <!-- font icon -->
     <link href="css/elegant-icons-style.css" rel="stylesheet"/>
     <link href="css/font-awesome.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" media="all" href="css/daterangepicker.css"/>
     <!-- full calendar css-->
     <link href="assets/fullcalendar/fullcalendar/bootstrap-fullcalendar.css" rel="stylesheet"/>
     <link href="assets/fullcalendar/fullcalendar/fullcalendar.css" rel="stylesheet"/>
@@ -202,20 +203,24 @@
                         </div>
                         <div class="row">
                             <table class="table table-striped table-bordered table-hover " style="text-align: center;">
+                                <thead>
                                 <tr>
-                                    <td>id</td>
-                                    <td>Họ tên</td>
-                                    <td>Năm sinh</td>
-                                    <td>Giới tính</td>
-                                    <td>Quên quán</td>
-                                    <td>Lớp</td>
+                                    <th>id</th>
+                                    <th>Họ tên</th>
+                                    <th>Năm sinh</th>
+                                    <th>Giới tính</th>
+                                    <th>Quên quán</th>
+                                    <th>Lớp</th>
 
-                                    <td>
-                                        <button class="btn btn-primary" data-toggle="modal" data-target="#addStudent" id="btnAdd">
+                                    <th>
+                                        <button class="btn btn-primary" data-toggle="modal" data-target="#addStudent"
+                                                id="btn_add">
                                             Thêm
                                         </button>
-                                    </td>
+                                    </th>
                                 </tr>
+                                </thead>
+                                <tbody id="content-">
                                 <?php
                                 $result = ListSinhVien();
                                 if ($result->num_rows > 0) :
@@ -229,7 +234,10 @@
                                             <td><?= $row['home_town'] ?></td>
                                             <td><?= $row['TenLop'] ?></td>
                                             <td>
-                                                <button class="btn btn-primary btnedit" button="Sua">Sửa</button>
+                                                <button class="btn btn-primary btnedit" button="Sua"
+                                                        value="<?= $row['id'] ?>" id="btn_edit" about="<?= $row['id'] ?>" data-toggle="modal"
+                                                        data-target="#addStudent">Sửa
+                                                </button>
 
                                                 <button id="btnThemSinhVien" class="btn btn-primary btnedit"
                                                         button="Xoa">Xóa
@@ -238,6 +246,7 @@
                                         </tr>
                                     <?php endwhile; ?>
                                 <?php endif; ?>
+                                </tbody>
                             </table>
                         </div>
 
@@ -257,29 +266,38 @@
                 </div>
                 <div class="modal-body">
                     <form id="form">
-                        <div class="form-group">
+                        <div class="form-group id_student">
                             <label for="exampleInputEmail1">id</label>
-                            <input type="id" class="form-control" id="id">
+                            <input type="id" class="form-control" id="id_student"  name="id" style="display: none">
                         </div>
                         <div class="form-group">
-                            <label for="exampleInputPassword1">Tên</label>
-                            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                            <label for="exampleInputPassword1">Họ tên</label>
+                            <input type="text" class="form-control" id="name_student"
+                                   placeholder="Họ và tên" name="name">
                         </div>
                         <div class="form-group">
-                            <label for="exampleInputEmail1">id</label>
-                            <input type="id" class="form-control" id="">
+                            <label for="exampleInputEmail1">Năm sinh</label>
+                            <input type="text" class="form-control" id="startDate" value="07/01/2015" name="date">
                         </div>
                         <div class="form-group">
-                            <label for="exampleInputEmail1">id</label>
-                            <input type="id" class="form-control" id="">
+                            <label for="exampleInputEmail1">Lớp</label>
+
+                            <select class="form-control form-control-lg" name="class" id="class">
+                                <?php $result = ListSinhVien();
+                                if ($result->num_rows > 0) :
+                                    // output data of each row
+                                    while ($row = $result->fetch_assoc()) :?>
+                                        <option id="<?= $row['idLop'] ?>"><?= $row['TenLop'] ?></option>
+                                    <?php endwhile; ?>
+                                <?php endif; ?>
+                            </select>
                         </div>
                         <div class="form-check">
                             <label class="form-check-label">
-                                <input type="checkbox" class="form-check-input">
-                                Check me out
+                                <input type="checkbox" class="form-check-input" name="sex" id="sex">
+                                Giới tính
                             </label>
                         </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -287,7 +305,7 @@
                         <div class="col-md-7"></div>
                         <div class="col-md-5">
                             <div class="col-md-6">
-                                <button type="button" class="btn btn-primary" id="save">Save</button>
+                                <button type="button" class="btn btn-primary" id="save" value="1">Save</button>
                             </div>
                             <div class="col-md-6">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -321,7 +339,7 @@
 <script src="assets/jquery-easy-pie-chart/jquery.easy-pie-chart.js"></script>
 <script src="js/owl.carousel.js"></script>
 <!-- jQuery full calendar -->
-<
+
 <script src="js/fullcalendar.min.js"></script> <!-- Full Google Calendar - Calendar -->
 <script src="assets/fullcalendar/fullcalendar/fullcalendar.js"></script>
 <!--script for this page only-->
@@ -348,6 +366,59 @@
 <script src="js/jquery.slimscroll.min.js"></script>
 <script src="js/MyJquery.js"></script>
 <script src="js/jquery.validate.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#startDate').datepicker();
+    })
+    $(document).on('click', '#btn_add', function () {
+        $('.id_student').css('display', 'none')
+        $('.modal-title').text('Thêm mới học sinh');
+        $('#save').val("1");
+    });
+    $(document).on('click', '#btn_edit', function () {
+        $('#save').val("2");
+        var value = $(this).val();
+        $('.modal-title').text('Cập nhật học sinh');
+        $.ajax({
+            url: 'student.php',
+            dataType: 'json',
+            type:'POST',
+            data: {
+                id:value
+            },
+            success: function (result) {
+                $('.id_student').css('display', 'display');
+                $("#id_student").val(result.id);
+                $('#startDate').val(result.date_bith)
+                $('#name_student').val(result.name);
+                $('#class').val(result.id_class);
+                if(result.sex=='nữ')
+                {
+                    $( "#sex").prop('checked', false);
+                }
+                else
+                {
+                    $( "#sex").prop('checked', true);
+                }
+            }
+        })
+    });
+    $(document).on('click','#save',function () {
+        var type=$(this).val();
+        var json = JSON.stringify($('form').serializeArray())
+        $.ajax({
+            url: 'action-student.php',
+            dataType: 'json',
+            type:'POST',
+            data: {
+                json:json
+            },
+            success: function (result) {
+               // console.log("dsadsa"+result);
+            }
+        })
+    })
+</script>
 </body>
 </html>
 

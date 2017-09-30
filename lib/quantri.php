@@ -4,8 +4,8 @@ function connect()
     $conn = null;
     $servername = "localhost";
     $username = "root";
-    $password = "";
-    $dbname = "baocaoxephoan";
+    $password = "mysql";
+    $dbname = "school";
 // Create connection
     $conn = new mysqli($servername, $username, $password, $dbname);
     mysqli_set_charset($conn, "utf8");
@@ -53,19 +53,24 @@ function AddSinhVien()
     header("location:SinhVien.php");
 }
 
-function SuaSinhVien($idSV)
+function SuaSinhVien($json)
 {
-    $ten = $_POST['txtTen'];
-    $namsinh = $_POST['txtNamSinh'];
-    settype($namsinh, 'int');
-    $gioitinh = $_POST['cbGioiTinh'];
-    $QueQuan = $_POST['txtQueQuan'];
-    $Lop = $_POST['cbLop'];
-    $Khoa = $_POST['cbKhoa'];
-    $qr = "UPDATE sinhvien SET Ten = '$ten', NamSinh='$namsinh', GioiTinh = '$gioitinh', QueQuan = '$QueQuan', idLop = '$Lop', idKhoa= '$Khoa' Where idSV='$idSV'";
-    // echo $qr;
-    mysql_query($qr);
-    header("location:SinhVien.php");
+    $object=json_decode($json);
+    $id=null;
+    $name=null;
+    $date=null;
+    $sex=null;
+    $class=null;
+    foreach ($object as $item)
+    {
+        if($item->name=='id')
+            $id=$item->value;
+        if($item->name=='name')
+            $name=$item->value;
+    }
+//    $qr = "UPDATE sinhvien SET Ten = '$ten', NamSinh='$namsinh', GioiTinh = '$gioitinh', QueQuan = '$QueQuan', idLop = '$Lop', idKhoa= '$Khoa' Where idSV='$idSV'";
+//    // echo $qr;
+//     return connect()->query($qr);
 }
 
 function ListSinhVien()
@@ -78,14 +83,17 @@ function ListSinhVien()
 
 function LaySinhVienTheoId($id)
 {
-    $qr = "SELECT * FROM sinhvien WHERE idSV=$id order by idSV desc";
-    return mysql_query($qr);
+
+    $qr = "SELECT * FROM sinhvien WHERE id=$id";
+    $result = connect()->query($qr);
+    return $result;
 }
 
 function ListLop()
 {
     $qr = "SELECT * FROM lop order by idLop desc";
-    return mysql_query($qr);
+    $result = connect()->query($qr);
+    return $result;
 }
 
 function ListKhoa()

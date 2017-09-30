@@ -2,9 +2,9 @@ $(function () {
 
     $menu = "";
     $themsuaxoa = "";
-    MenuClick();
-    //KiemTraNutThemSuaXoa();
-    KiemTraTextBox();
+    // MenuClick();
+    // //KiemTraNutThemSuaXoa();
+    // KiemTraTextBox();
 
     function kiemTraTextBox() {
         varvalidator = $("#input_form").validate({
@@ -108,6 +108,3 @@ $(function () {
         });
     }
 });
-$(document).on('click','.item-menu',function () {
-    var name=
-})
