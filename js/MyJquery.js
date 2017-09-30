@@ -108,3 +108,6 @@ $(function () {
         });
     }
 });
+$(document).on('click','.item-menu',function () {
+    var name=
+})

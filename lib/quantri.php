@@ -1,67 +1,102 @@
-<?php 
- function ListThongBao(){
-    $qr="SELECT * FROM thongbao order by idtb desc";
+<?php
+function connect()
+{
+    $conn = null;
+    $servername = "localhost";
+    $username = "root";
+    $password = "";
+    $dbname = "baocaoxephoan";
+// Create connection
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    mysqli_set_charset($conn, "utf8");
+// Check connection
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    }
+    return $conn;
+}
+
+function ListThongBao()
+{
+    $qr = "SELECT * FROM thongbao order by idtb desc";
     return mysql_query($qr);
 }
-function AddThongBao(){
-   $tieude = $_POST['txtTieuDe'];
-   $tieudekhongdau=changeTitle($tieude);
-  $urlAnh=$_POST['txtAnh'];
-  $tomtat=$_POST['txtTomTat'];
-  $noidung = $_POST['txtNoiDung'];
-  $ngayviet = date("d-m-y");
- $qr = "
+
+function AddThongBao()
+{
+    $tieude = $_POST['txtTieuDe'];
+    $tieudekhongdau = changeTitle($tieude);
+    $urlAnh = $_POST['txtAnh'];
+    $tomtat = $_POST['txtTomTat'];
+    $noidung = $_POST['txtNoiDung'];
+    $ngayviet = date("d-m-y");
+    $qr = "
   INSERT into thongbao values (null, '$tieude','$tieudekhongdau','$urlAnh', '$tomtat','$noidung','$ngayviet')
   ";
     mysql_query($qr);
     header("location:ThongBao.php");
 }
-function AddSinhVien(){
-   $ten = $_POST['txtTen'];
-  $namsinh=$_POST['txtNamSinh'];
-  settype($namsinh, 'int');
-  $gioitinh=$_POST['cbGioiTinh'];
-  $QueQuan = $_POST['txtQueQuan'];
-  $Lop = $_POST['cbLop'];
-  $Khoa = $_POST['cbKhoa'];
- $qr = "
+
+function AddSinhVien()
+{
+    $ten = $_POST['txtTen'];
+    $namsinh = $_POST['txtNamSinh'];
+    settype($namsinh, 'int');
+    $gioitinh = $_POST['cbGioiTinh'];
+    $QueQuan = $_POST['txtQueQuan'];
+    $Lop = $_POST['cbLop'];
+    $Khoa = $_POST['cbKhoa'];
+    $qr = "
   INSERT into sinhvien values (null, '$ten',$namsinh,'$gioitinh', $QueQuan,$Lop,$Khoa)
   ";
     mysql_query($qr);
     header("location:SinhVien.php");
 }
-function SuaSinhVien($idSV){
-   $ten = $_POST['txtTen'];
-  $namsinh=$_POST['txtNamSinh'];
-  settype($namsinh, 'int');
-  $gioitinh=$_POST['cbGioiTinh'];
-  $QueQuan = $_POST['txtQueQuan'];
-  $Lop = $_POST['cbLop'];
-  $Khoa = $_POST['cbKhoa'];
-  $qr = "UPDATE sinhvien SET Ten = '$ten', NamSinh='$namsinh', GioiTinh = '$gioitinh', QueQuan = '$QueQuan', idLop = '$Lop', idKhoa= '$Khoa' Where idSV='$idSV'";
-   // echo $qr;
+
+function SuaSinhVien($idSV)
+{
+    $ten = $_POST['txtTen'];
+    $namsinh = $_POST['txtNamSinh'];
+    settype($namsinh, 'int');
+    $gioitinh = $_POST['cbGioiTinh'];
+    $QueQuan = $_POST['txtQueQuan'];
+    $Lop = $_POST['cbLop'];
+    $Khoa = $_POST['cbKhoa'];
+    $qr = "UPDATE sinhvien SET Ten = '$ten', NamSinh='$namsinh', GioiTinh = '$gioitinh', QueQuan = '$QueQuan', idLop = '$Lop', idKhoa= '$Khoa' Where idSV='$idSV'";
+    // echo $qr;
     mysql_query($qr);
     header("location:SinhVien.php");
 }
-function ListSinhVien(){
-    $qr="SELECT sinhvien.*, lop.TenLop, khoa.TenKhoa FROM sinhvien, lop, khoa WHERE lop.idLop=sinhvien.idLop AND khoa.idKhoa=sinhvien.idKhoa 
-    order by idSV desc";
+
+function ListSinhVien()
+{
+
+    $qr = "SELECT * from sinhvien JOIN lop on sinhvien.id_class=lop.idLop";
+    $result = connect()->query($qr);
+    return $result;
+}
+
+function LaySinhVienTheoId($id)
+{
+    $qr = "SELECT * FROM sinhvien WHERE idSV=$id order by idSV desc";
     return mysql_query($qr);
 }
-function LaySinhVienTheoId($id){
-    $qr="SELECT * FROM sinhvien WHERE idSV=$id order by idSV desc";
+
+function ListLop()
+{
+    $qr = "SELECT * FROM lop order by idLop desc";
     return mysql_query($qr);
 }
-function ListLop(){
-    $qr="SELECT * FROM lop order by idLop desc";
+
+function ListKhoa()
+{
+    $qr = "SELECT * FROM khoa order by idKhoa desc";
     return mysql_query($qr);
 }
-function ListKhoa(){
-    $qr="SELECT * FROM khoa order by idKhoa desc";
-    return mysql_query($qr);
-}
-function stripUnicode($str){
-    if(!$str) return false;
+
+function stripUnicode($str)
+{
+    if (!$str) return false;
     $unicode = array(
         'a' => 'á|à|ả|ã|ạ|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ',
         'A' => 'Á|À|Ả|Ã|Ạ|Ă|Á|Ằ|Ẳ|Ẵ|Ặ|Â|Ấ|Ầ|Ẩ|Ẫ|Ậ',
@@ -77,23 +112,25 @@ function stripUnicode($str){
         'U' => 'Ú|Ù|Ủ|Ũ|Ụ|Ư|Ứ|Ừ|Ử|Ữ|Ự',
         'y' => 'ý|ỳ|ỷ|ỹ|ỵ',
         'Y' => 'Ý|Ỳ|Ỷ|Ỹ|Ỵ'
-        );
-    foreach($unicode as $khongdau=>$codau){
+    );
+    foreach ($unicode as $khongdau => $codau) {
         $arr = explode("|", $codau);
-        $str = str_replace($arr,$khongdau,$str);
+        $str = str_replace($arr, $khongdau, $str);
     }
     return $str;
 }
 
-function changeTitle($str){
+function changeTitle($str)
+{
 
     $str = trim($str);
-    if($str=="") return "";
+    if ($str == "") return "";
     $str = str_replace('"', '', $str);
     $str = str_replace(":", '', $str);
     $str = stripUnicode($str);
-    $str = mb_convert_case($str, MB_CASE_LOWER,'utf-8');
+    $str = mb_convert_case($str, MB_CASE_LOWER, 'utf-8');
     $str = str_replace(' ', '-', $str);
     return $str;
 }
+
 ?>
